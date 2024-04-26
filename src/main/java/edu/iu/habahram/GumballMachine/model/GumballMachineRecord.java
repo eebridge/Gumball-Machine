@@ -80,4 +80,6 @@ public final class GumballMachineRecord {
                 "count=" + count + ']';
     }
 
+    public void refill(int refillCount) {
+    }
 }

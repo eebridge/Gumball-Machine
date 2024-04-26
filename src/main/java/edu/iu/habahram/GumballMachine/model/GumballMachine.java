@@ -35,14 +35,62 @@ public class GumballMachine implements IGumballMachine {
 
     @Override
     public TransitionResult ejectQuarter() {
-        //TODO
-        return null;
+        boolean succeeded = false;
+        String message = "";
+        if (state.equalsIgnoreCase(HAS_QUARTER)) {
+            state = NO_QUARTER;
+            message = "Returned quarter";
+            succeeded = true;
+        } else {
+            message = "Can't return quarter";
+        }
+        return new TransitionResult(succeeded, message, state, count);
     }
 
     @Override
     public TransitionResult turnCrank() {
-        //TODO
-        return null;
+        boolean succeeded = false;
+        String message = "";
+        if (state.equalsIgnoreCase(HAS_QUARTER)) {
+            if (count > 0) {
+                state = SOLD;
+                message = "Turned crank and dispensing gumball";
+                succeeded = true;
+            } else {
+                state = SOLD_OUT;
+                message = "No gumballs remaining";
+            }
+        } else if (state.equalsIgnoreCase(NO_QUARTER)) {
+            message = "Insert a quarter first";
+        } else {
+            message = "Invalid operation";
+        }
+        return new TransitionResult(succeeded, message, state, count);
+    }
+
+    @Override
+    public void releaseBall() {
+        if (count > 0) {
+            count--;
+            if (count == 0) {
+                state = SOLD_OUT;
+            } else {
+                state = NO_QUARTER;
+            }
+        }
+    }
+
+    @Override
+    public void refill(int count) {
+        this.count += count; // Add the count to the current count
+        if (this.count > 0 && state.equals(GumballMachineState.OUT_OF_GUMBALLS.name())) {
+            state = GumballMachineState.NO_QUARTER.name();
+        }
+    }
+
+    @Override
+    public void setCount(int count) {
+        this.count = count; // Set the internal count
     }
 
     @Override
@@ -57,13 +105,9 @@ public class GumballMachine implements IGumballMachine {
 
     @Override
     public String getTheStateName() {
-        return null;
+        return state;
     }
 
-    @Override
-    public void releaseBall() {
-
-    }
 
 
 }
